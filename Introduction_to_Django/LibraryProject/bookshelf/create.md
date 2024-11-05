@@ -1,5 +1,5 @@
 # Create a book instance
 
-    book = Book.objects.create(title="The Great Gatsby", author="F. Scott Fitzgerald", published_year=1925)
+    book = Book.objects.create(title="1984", author="George Orwel", publication_year=1949)
 
     
