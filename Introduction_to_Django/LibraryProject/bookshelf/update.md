@@ -1,5 +1,6 @@
 # Update the title of the book
 
-    book.title = "1984 (Nineteen Eighty-Four)"
-    book.title.save()
+    book_rerieved.title = "1984 (Nineteen Eighty-Four)"
+    book_retrieved.save(book.title)
 
+    
