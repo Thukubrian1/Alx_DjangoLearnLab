@@ -31,19 +31,19 @@ def query_all_books_in_library(library_name):
     except Library.DoesNotExist:
         return f"No library found with name {library_name}"
 
-def query_librarian_for_library(library_name):
+def query_librarian_for_library(librarian_name):
     """
     Retrieve the librarian for a specific library.
     :param library_name: The name of the library.
     :return: The librarian of the library.
     """
     try:
-        library = Library.objects.get(name=library_name)  
-        librarian = library.librarian  
+        librarian = Librarian.objects.get(name=librarian_name)  
+        librarian = librarian.librarian  
     except Library.DoesNotExist:
         return f"No library found with name {library_name}"
     except Librarian.DoesNotExist:
-        return f"No librarian assigned to the library {library_name}"
+        return f"No librarian assigned to the library {librarian_name}"
 
 if __name__ == "__main__":
 
