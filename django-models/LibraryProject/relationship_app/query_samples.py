@@ -11,7 +11,8 @@ def query_books_by_author(author_name):
     :return: List of books by the given author.
     """
     try:
-        author = Author.objects.get(name = author_name)  
+        author = Author.objects.get(name = author_name)
+        Author.objects.filter(author=author)
         books = author.books.all()  #
         return books
     except Author.DoesNotExist:
