@@ -4,7 +4,7 @@ from .models import Book
 
 def book_list(request):
     books = Book.objects.all()
-    return render(request , "relationshipp_app/book_list.html")
+    return render(request , "relationship_app/book_list.html")
 
 
 from django.views.generic import DetailView
@@ -12,7 +12,7 @@ from .models import Library
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'relationshipp_app/library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
 
     def get_context_data(self, **kwargs):
