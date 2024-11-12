@@ -15,10 +15,11 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
-
-    def get_context_data(self, **kwargs):
+    
+    def get_context_data(self, request, **kwargs):
 
         context = super().get_context_data(**kwargs)
         library = self.get_object()
         context['books'] = library.books.all()  
-        return context
+         
+        return render(request, 'relationship_app/list_books.html', context)
