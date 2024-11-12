@@ -4,7 +4,7 @@ from .models import Book
 
 def book_list(request):
     books = Book.objects.all()
-    return render(request , "relationship_app/book_list.html")
+    return render(request , "relationship_app/list_books.html")
 
 
 from django.views.generic import DetailView
