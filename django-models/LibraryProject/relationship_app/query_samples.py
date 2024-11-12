@@ -38,7 +38,7 @@ def query_librarian_for_library(librarian_name):
     :return: The librarian of the library.
     """
     try:
-        librarian = Librarian.objects.get(library=library_name)  
+        librarian = Librarian.objects.get(library="")  
         librarian = librarian.librarian  
     except Library.DoesNotExist:
         return f"No library found with name {library_name}"
