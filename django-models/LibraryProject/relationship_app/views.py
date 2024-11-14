@@ -43,26 +43,26 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 # Helper functions to check roles
-def is_admin(user):
+def Admin(user):
     return user.is_authenticated and user.userprofile.role == 'Admin'
 
-def is_librarian(user):
+def Librarian(user):
     return user.is_authenticated and user.userprofile.role == 'Librarian'
 
-def is_member(user):
+def Member(user):
     return user.is_authenticated and user.userprofile.role == 'Member'
 
 # Admin view
-@user_passes_test(is_admin)
+@user_passes_test(Admin)
 def admin_view(request):
     return render(request, 'admin_view.html')
 
 # Librarian view
-@user_passes_test(is_librarian)
+@user_passes_test(Librarian)
 def librarian_view(request):
     return render(request, 'librarian_view.html')
 
 # Member view
-@user_passes_test(is_member)
+@user_passes_test(Member)
 def member_view(request):
     return render(request, 'member_view.html')
