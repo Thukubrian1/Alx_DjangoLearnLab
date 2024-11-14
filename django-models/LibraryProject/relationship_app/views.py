@@ -20,6 +20,23 @@ class LibraryDetailView(DetailView):
 
         context = super().get_context_data(**kwargs)
         library = self.get_object()
-        context['books'] = library.books.all()  
-         
+        context['books'] = library.books.all()   
         return render(request, 'relationship_app/list_books.html', context)
+
+
+from django.contrib.auth import views as auth_views
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+
+# Custom Registration View
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')  # Redirect to home after registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
