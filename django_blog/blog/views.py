@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment
 from .forms import CommentForm
 from .models import Tag
+from django.views.generic import TemplateView
 from django.urls import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
@@ -23,27 +24,28 @@ def register(request):
             return redirect('login')
     else:
         form = UserCreationForm()
-    return render(request, 'blog/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 @login_required
 def profile(request):
-    return render(request, 'blog/profile.html')
+    return render(request, 'profile.html')
 
-
+class HomeView(TemplateView):
+    template_name = 'home.html'
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/post_list.html'  # Template for listing posts
+    template_name = 'post_list.html'  # Template for listing posts
     context_object_name = 'posts'
     ordering = ['-date_posted']
 
 class PostDetailView(DetailView):
     model = Post
-    template_name = 'blog/post_detail.html'  # Template for viewing a single post
+    template_name = 'post_detail.html'  # Template for viewing a single post
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content']
-    template_name = 'blog/post_form.html'  # Template for creating/editing posts
+    template_name = 'post_form.html'  # Template for creating/editing posts
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -52,7 +54,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
-    template_name = 'blog/post_form.html'
+    template_name = 'post_form.html'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -64,7 +66,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'blog/post_confirm_delete.html'
+    template_name = 'post_confirm_delete.html'
     success_url = '/'
 
     def test_func(self):
@@ -111,9 +113,9 @@ def search_posts(request):
         Q(content__icontains=query) |
         Q(tags__name__icontains=query)
     ).distinct()
-    return render(request, 'blog/search_results.html', {'query': query, 'results': results})
+    return render(request, 'search_results.html', {'query': query, 'results': results})
 
 def posts_by_tag(request, tag_name):
     tag = get_object_or_404(Tag, name=tag_name)
     posts = tag.posts.all()
-    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
+    return render(request, 'posts_by_tag.html', {'tag': tag, 'posts': posts})
