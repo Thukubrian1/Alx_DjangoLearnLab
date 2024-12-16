@@ -3,12 +3,16 @@ from .models import Book
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import permission_required
-from django import template
+from django.core.paginator import Paginator
+
 # Create your views here.
 
 def list_books(request):
     books = Book.objects.all()
-    return render(request , "relationship_app/list_books.html")
+    paginator = Paginator(books, 10)  # Show 10 books per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'relationship_app/book_list.html', {'page_obj': page_obj})
 
 
 from django.views.generic import DetailView
