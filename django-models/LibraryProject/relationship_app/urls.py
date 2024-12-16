@@ -15,4 +15,7 @@ urlpatterns = [
     path('relationship_app/books/add_book/', views.add_book, name='add_book'),
     path('relationship_app/books/edit_book/<int:book_id>/', views.edit_book, name='edit_book'),
     path('relationship_app/books/delete/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('admin-view/', views.admin_view, name='admin-view'),
+    path('librarian-view/', views.librarian_view, name='librarian-view'),
+    path('member-view/', views.member_view, name='member-view'),
 ]
