@@ -8,7 +8,7 @@ from django import template
 
 def list_books(request):
     books = Book.objects.all()
-    return render(request , "list_books.html")
+    return render(request , "relationship_app/list_books.html")
 
 
 from django.views.generic import DetailView
@@ -16,7 +16,7 @@ from .models import Library
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
     
     def get_context_data(self, request, **kwargs):
@@ -24,7 +24,7 @@ class LibraryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         library = self.get_object()
         context['books'] = library.books.all()   
-        return render(request, 'list_books.html')
+        return render(request, 'relationship_app/list_books.html')
 
 
 from django.contrib.auth import views as auth_views
@@ -42,7 +42,7 @@ def register(request):
             return redirect('home')  # Redirect to home after registration
     else:
         form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 # Helper functions to check roles
 def is_admin(user):
@@ -50,21 +50,21 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def admin_view(request):
-    return render(request, 'admin_view.html')
+    return render(request, 'relationship_app/admin_view.html')
 
 def is_librarian(user):
     return user.is_authenticated and user.userprofile.role == 'Librarian'
 
 @user_passes_test(is_librarian)
 def librarian_view(request):
-    return render(request, 'librarian_view.html')
+    return render(request, 'relationship_app/librarian_view.html')
 
 def is_member(user):
     return user.is_authenticated and user.userprofile.role == 'Member'
 
 @user_passes_test(is_member)
 def member_view(request):
-    return render(request, 'member_view.html')
+    return render(request, 'relationship_app/member_view.html')
 
 @permission_required('relationship_app.can_add_book', login_url='/login/')
 def add_book(request):
@@ -73,7 +73,7 @@ def add_book(request):
             Book.save()
             return redirect('book_list')  # redirect to the book list after adding
     else: 
-        return render(request, 'add_book.html',)
+        return render(request, 'relationship_app/add_book.html',)
 
 @permission_required('relationship_app.can_change_book', login_url='/login/')
 def edit_book(request, book_id):
@@ -90,4 +90,4 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     book.delete()
-    return redirect('book_list')
+    return redirect('relationship_app/book_list')
