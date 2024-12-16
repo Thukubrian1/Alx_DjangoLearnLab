@@ -24,28 +24,28 @@ def register(request):
             return redirect('login')
     else:
         form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'blog/register.html', {'form': form})
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'blog/profile.html')
 
 class HomeView(TemplateView):
-    template_name = 'home.html'
+    template_name = 'blog/home.html'
 class PostListView(ListView):
     model = Post
-    template_name = 'post_list.html'  # Template for listing posts
+    template_name = 'blog/post_list.html'  # Template for listing posts
     context_object_name = 'posts'
     ordering = ['-date_posted']
 
 class PostDetailView(DetailView):
     model = Post
-    template_name = 'post_detail.html'  # Template for viewing a single post
+    template_name = 'blog/post_detail.html'  # Template for viewing a single post
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content']
-    template_name = 'post_form.html'  # Template for creating/editing posts
+    template_name = 'blog/post_form.html'  # Template for creating/editing posts
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -54,7 +54,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
-    template_name = 'post_form.html'
+    template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -66,7 +66,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'post_confirm_delete.html'
+    template_name = 'blog/post_confirm_delete.html'
     success_url = '/'
 
     def test_func(self):

@@ -7,20 +7,20 @@ from .views import CommentCreateView, CommentUpdateView, CommentDeleteView, sear
 urlpatterns = [
     # Built-in login and logout views
     path('', views.HomeView.as_view(), name='home'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
-    path('posts/', PostListView.as_view(), name='posts'),
-    path('posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
-    path('posts/new/', PostCreateView.as_view(), name='post-create'),
-    path('create/', views.PostCreateView.as_view(), name='post_create'),   # Create a post
+    path('blog/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('blog/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('blog/register/', views.register, name='register'),
+    path('blog/profile/', views.profile, name='profile'),
+    path('blog/posts/', PostListView.as_view(), name='posts'),
+    path('blog/posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('blog/posts/new/', PostCreateView.as_view(), name='post-create'),
+    path('blog/create/', views.PostCreateView.as_view(), name='post_create'),   # Create a post
     path('posts/<int:pk>/edit/', PostUpdateView.as_view(), name='post-update'),
-    path('posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
-    path('posts/<int:post_id>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
-    path('post/<int:pk>/delete/", "post/<int:pk>/update/", "post/new/',PostUpdateView.as_view()),
-    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
-    path('search/', search_posts, name='search-posts'),
+    path('blog/posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    path('blog/posts/<int:post_id>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
+    path('blog/post/<int:pk>/delete/", "post/<int:pk>/update/", "post/new/',PostUpdateView.as_view()),
+    path('blog/comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+    path('blog/search/', search_posts, name='search-posts'),
 
 ]
 
