@@ -102,3 +102,21 @@ class UnlikePostView(APIView):
         like.delete()
 
         return Response({"detail": "Like removed successfully."}, status=status.HTTP_200_OK)
+    
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Get the users that the current user is following
+        following_users = user.following.all()
+
+        # Get posts from the followed users, ordered by creation date
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+        # Serialize the posts (assuming you already have a PostSerializer defined)
+        from .serializers import PostSerializer
+        serializer = PostSerializer(posts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
