@@ -1,32 +1,35 @@
 from rest_framework import serializers
-from .models import Post, Comment
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 from rest_framework.authtoken.models import Token
 
 
 User = get_user_model()
 
-class UserSerializer(serializers.Serializer):  # Using `serializers.Serializer` instead of `ModelSerializer`
-    id = serializers.IntegerField(read_only=True)
-    username = serializers.CharField(max_length=150)
-    email = serializers.CharField(max_length=254, required=False, allow_blank=True)
+class UserSerializer(serializers.ModelSerializer):
+    # Define fields explicitly using `serializers.CharField()`
+    username = serializers.CharField(max_length=150, required=True)
+    email = serializers.CharField(max_length=254, required=True)
     first_name = serializers.CharField(max_length=30, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
     password = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
 
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
+        read_only_fields = ['id']
+
     def create(self, validated_data):
-        # Manually handle user creation
-        user = User(
+        # Use `get_user_model().objects.create_user` to create the user
+        user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data.get('email', ''),
+            email=validated_data['email'],
+            password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', '')
         )
-        user.set_password(validated_data['password'])  # Hash password
-        user.save()
-        user.password = make_password(validated_data['password'])
-        user.save()
+
+        # Generate a token for the user
+        Token.objects.create(user=user)
         return user
 
     def update(self, instance, validated_data):
