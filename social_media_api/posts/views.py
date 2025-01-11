@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from .models import Post, Like
+from rest_framework import generics
 from notifications.models import Notification
 from django.contrib.contenttypes.models import ContentType
 from django_filters.rest_framework import DjangoFilterBackend
@@ -61,6 +62,19 @@ class LikePostView(APIView):
         # Create or get the Like object, ensuring a user cannot like a post multiple times
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
+        # If the like is created, generate a notification
+        if created:
+            # Create a notification for the post author
+            Notification.objects.create(
+                recipient=post.author,  # The author of the post
+                actor=request.user,  # The user who liked the post
+                verb='liked',  # Describes the action
+                target=post  # The post that was liked
+            )
+            return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"message": "You have already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -81,6 +95,8 @@ class UnlikePostView(APIView):
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
+            
+            # Optionally, you can create a notification for unliking the post or leave it out
             return Response({"message": "Like removed successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Like.DoesNotExist:
             return Response({"message": "You haven't liked this post yet"}, status=status.HTTP_400_BAD_REQUEST)
