@@ -15,10 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from .views import FeedView
 from django.urls import path, include
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
-     path('api/', include('posts.urls')),  # Added the posts routes here
+    path('api/', include('posts.urls')),  # Added the posts routes here
+    path('feed/', FeedView.as_view(), name='feed'),
 ]

@@ -43,3 +43,10 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(validated_data['password'])
         instance.save()
         return instance
+    
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'following', 'followers']
+        read_only_fields = ['id', 'username', 'followers']
