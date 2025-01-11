@@ -57,7 +57,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         # Get the post object by primary key (pk)
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         # Create or get the Like object, ensuring a user cannot like a post multiple times
         like, created = Like.objects.get_or_create(user=request.user, post=post)
@@ -89,7 +89,7 @@ class UnlikePostView(APIView):
 
     def post(self, request, pk):
         # Get the post object by primary key (pk)
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         # Try to retrieve the Like object, and delete it if it exists
         try:
