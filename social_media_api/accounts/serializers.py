@@ -1,17 +1,42 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import Post, Comment
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from rest_framework.authtoken.models import Token
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User()
-        fields = ['id', 'username', 'bio', 'profile_picture']
-        read_only_fields = ['id']
 
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User()
-        fields = ['username', 'password', 'bio', 'profile_picture']
+User = get_user_model()
+
+class UserSerializer(serializers.Serializer):  # Using `serializers.Serializer` instead of `ModelSerializer`
+    id = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(max_length=150)
+    email = serializers.CharField(max_length=254, required=False, allow_blank=True)
+    first_name = serializers.CharField(max_length=30, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
+    password = serializers.CharField(write_only=True, required=True, style={"input_type": "password"})
 
     def create(self, validated_data):
-        user = User().objects.create_user(**validated_data)
+        # Manually handle user creation
+        user = User(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', '')
+        )
+        user.set_password(validated_data['password'])  # Hash password
+        user.save()
+        user.password = make_password(validated_data['password'])
+        user.save()
         return user
+
+    def update(self, instance, validated_data):
+        # Handle updates for the User model
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
