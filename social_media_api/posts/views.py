@@ -55,27 +55,11 @@ class LikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        # Use generics.get_object_or_404 to retrieve the post or raise 404 if not found
+        # Get the post object by primary key (pk)
         post = get_object_or_404(Post, pk=pk)
-        user = request.user
 
-        # Use get_or_create to like the post only if not already liked
-        like, created = Like.objects.get_or_create(user=user, post=post)
-
-        # If a like is already created, return an error response
-        if not created:
-            return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Create notification for the post author when a new like is made
-        Notification.objects.create(
-            recipient=post.author,
-            actor=user,
-            verb="liked",
-            target_content_type=ContentType.objects.get_for_model(post),
-            target_object_id=post.id
-        )
-
-        return Response({"detail": "Post liked successfully."}, status=status.HTTP_200_OK)
+        # Create or get the Like object, ensuring a user cannot like a post multiple times
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -85,23 +69,21 @@ class PostViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['title', 'content']
     ordering_fields = ['created_at']
+
 class UnlikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        # Use generics.get_object_or_404 to retrieve the post or raise 404 if not found
+        # Get the post object by primary key (pk)
         post = get_object_or_404(Post, pk=pk)
-        user = request.user
 
-        # Check if the user has liked the post
-        like = Like.objects.filter(user=user, post=post).first()
-        if not like:
-            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Remove like
-        like.delete()
-
-        return Response({"detail": "Like removed successfully."}, status=status.HTTP_200_OK)
+        # Try to retrieve the Like object, and delete it if it exists
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response({"message": "Like removed successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except Like.DoesNotExist:
+            return Response({"message": "You haven't liked this post yet"}, status=status.HTTP_400_BAD_REQUEST)
     
 class FeedView(APIView):
     permission_classes = [IsAuthenticated]
